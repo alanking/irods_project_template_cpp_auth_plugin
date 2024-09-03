@@ -1,0 +1,1 @@
+# irods_project_template_cpp_auth_plugin
