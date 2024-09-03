@@ -1,3 +1,5 @@
+/// \file
+
 #include <irods/authentication_plugin_framework.hpp>
 
 #include <irods/irods_logger.hpp>
@@ -15,22 +17,38 @@ namespace
 
 namespace irods
 {
+	// This project template will implement a flow that goes like this:
+	//
+	//     auth_client_start   auth_client_operation   auth_client_authenticated
+	//      \                  / \                     /
+	//       \                /   \                   /
+	// CLIENT \              /     \                 /                    CLIENT
+	// --------\------------/-------\---------------/---------------------------
+	// SERVER   \          /         \             /                      SERVER
+	//           \        /           \           /
+	//           auth_agent_start   auth_agent_operation
+	//
+	// An auth plugin can implement as many steps as needed to satisfy authentication requirements.
 	class project_template_cpp_authentication : public irods_auth::authentication_base
 	{
 	  private:
+		// These are the strings used to refer to the operations added for this plugin. These operation names can
+		// be anything you want.
 		static constexpr const char* auth_client_operation_name = "auth_client_operation";
 		static constexpr const char* auth_client_authenticated_name = "auth_client_authenticated";
 		static constexpr const char* auth_agent_start_name = "auth_agent_start";
 		static constexpr const char* auth_agent_operation_name = "auth_agent_operation";
 
+		// This is the string that will be used for the name of the auth scheme. Setting the auth scheme in the client
+		// and server connection information is important for the server to be able to identify the type of
+		// authentication used by the client.
 		static constexpr const char* project_template_cpp_scheme = "project_template_cpp";
 
 	  public:
-		pam_interactive_authentication()
+		project_template_cpp_authentication()
 		{
 			// The start operation is not added here because the authentication_base class already has the start
-			// operation built in. It must be implemented in the client-side plugin. It is implemented below along with
-			// the other operations.
+			// operation built in. It must be implemented in the client-side plugin.
 
 			// Other client-side operations can be added here. The only required operation is the start operation, but
 			// it is a good idea to separate steps in the authentication flow into different operations.
@@ -55,7 +73,7 @@ namespace irods
 			// server or some centralized service which iRODS trusts for authentication (e.g. PAM).
 			add_operation(auth_agent_operation_name, OPERATION(rsComm_t, auth_agent_operation));
 #endif
-		} // ctor
+		} // project_template_cpp_authentication constructor
 
 	  private:
 		auto auth_client_start(rcComm_t& comm, const nlohmann::json& req) -> nlohmann::json
@@ -78,6 +96,9 @@ namespace irods
 
 		auto auth_client_operation(rcComm_t& comm, const nlohmann::json& req) -> nlohmann::json
 		{
+			// At this point, you may wish to display a prompt to the user, or the plugin can require certain keys up
+			// front to provide input if you wish to avoid working with stdin and stdout.
+
 			// The authentication plugin framework uses irods::exception to emit and handle errors, so
 			// irods_auth::request will throw if any errors occur.
 			auto server_req = req;
@@ -128,7 +149,20 @@ namespace irods
 		{
 			auto resp = req;
 
-			// This can do any kinds of checks you want.
+			// This can do any kinds of checks you want. For this template, we are doing the bare minimum while
+			// demonstrating the capability to enable multiple steps.
+
+			// The most important part of the server side of the plugin is to intialize the authInfo of the
+			// RsComm::clientUser and RsComm::proxyUser. This is a kind of authorization which sets the privilege level
+			// of the authenticated user in the RsComm. Once this is set, it determines which APIs the client is allowed
+			// to invoke as this authenticated user. This is how the server knows that the user has been authenticated.
+
+			// For this template project, we will make 3 assumptions:
+			//   1. The client user and proxy user are the same (i.e. not acting on behalf of another user).
+			//   2. The user is unprivileged (i.e. not a rodsadmin).
+			//   3. The user's "home zone" is the local zone (i.e. not a remote user).
+			comm.proxyUser.authInfo.authFlag = LOCAL_USER_AUTH;
+			comm.clientUser.authInfo.authFlag = LOCAL_USER_AUTH;
 
 			return resp;
 		} // auth_agent_operation

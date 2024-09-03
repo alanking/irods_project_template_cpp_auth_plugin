@@ -33,7 +33,7 @@ def main():
 
 		irods_python_ci_utilities.install_os_packages_from_files(
 			glob.glob(os.path.join(os_specific_directory,
-					  f'irods-auth-plugin-nop*.{package_suffix}')
+					  f'irods-auth-plugin-project-template-cpp*.{package_suffix}')
 			)
 		)
 

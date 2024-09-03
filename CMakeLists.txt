@@ -65,7 +65,7 @@ install(
 	"${project_component_part}-server"
 )
 
-set(PLUGIN_PACKAGE_NAME "irods-auth-plugin-nop")
+set(PLUGIN_PACKAGE_NAME "irods-auth-plugin-project-template-cpp")
 
 include(IrodsCPackCommon)
 
