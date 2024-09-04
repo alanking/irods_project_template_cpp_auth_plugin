@@ -95,7 +95,7 @@ def main(build_directory, output_root_directory, irods_packages_root_directory, 
     install_building_dependencies(externals_directory)
     if irods_packages_root_directory:
         irods_python_ci_utilities.install_irods_dev_and_runtime_packages(irods_packages_root_directory)
-    build_directory = os.path.abspath(build_directory or tempfile.mkdtemp(prefix='irods_auth_plugin_pam_interactive_build_directory'))
+    build_directory = os.path.abspath(build_directory or tempfile.mkdtemp(prefix='irods_project_template_cpp_auth_plugin_build_directory'))
     irods_python_ci_utilities.subprocess_get_output(['cmake', os.path.dirname(os.path.realpath(__file__))], check_rc=True, cwd=build_directory)
     irods_python_ci_utilities.subprocess_get_output(['make', '-j', str(multiprocessing.cpu_count()), 'package'], check_rc=True, cwd=build_directory)
     if output_root_directory:

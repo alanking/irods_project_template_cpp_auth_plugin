@@ -9,7 +9,6 @@ foreach(plugin_variant IN ITEMS client server)
 	target_link_libraries(
 		"${plugin_target_part}_${plugin_variant}"
 		PRIVATE
-		irods_pam_interactive_common
 		irods_common
 		irods_plugin_dependencies
 		"${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_filesystem.so"

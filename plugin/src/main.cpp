@@ -2,11 +2,11 @@
 
 #include <irods/authentication_plugin_framework.hpp>
 
-#include <irods/irods_logger.hpp>
 #include <irods/rcConnect.h>
 
 #ifdef RODS_SERVER
-#  include "irods/private/pam/project_template_cpp_plugin_logging_category.hpp"
+#  include "irods/private/project_template_cpp/project_template_cpp_plugin_logging_category.hpp"
+#  include <irods/irods_logger.hpp>
 #endif
 
 #include <fmt/format.h>
@@ -17,7 +17,9 @@
 namespace
 {
 	namespace irods_auth = irods::experimental::auth;
+#ifdef RODS_SERVER
 	using log_plugin = irods::experimental::log::logger<project_template_cpp_auth_plugin_logging_category>;
+#endif
 } // anonymous namespace
 
 namespace irods
