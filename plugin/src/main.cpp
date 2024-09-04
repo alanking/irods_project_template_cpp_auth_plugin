@@ -5,6 +5,10 @@
 #include <irods/irods_logger.hpp>
 #include <irods/rcConnect.h>
 
+#ifdef RODS_SERVER
+#  include "irods/private/pam/project_template_cpp_plugin_logging_category.hpp"
+#endif
+
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
 
@@ -13,6 +17,7 @@
 namespace
 {
 	namespace irods_auth = irods::experimental::auth;
+	using log_plugin = irods::experimental::log::logger<project_template_cpp_auth_plugin_logging_category>;
 } // anonymous namespace
 
 namespace irods
@@ -130,6 +135,11 @@ namespace irods
 		{
 			// This operation can be used to initialize state in the server, whether that's with the iRODS server or a
 			// service being used for this authentication.
+
+			constexpr const char* CFG_LOG_LEVEL_CATEGORY_PROJECT_TEMPLATE_CPP_AUTH_PLUGIN_KW =
+				"project_template_cpp_auth_plugin";
+			log_plugin::set_level(irods::experimental::log::get_level_from_config(
+				CFG_LOG_LEVEL_CATEGORY_PROJECT_TEMPLATE_CPP_AUTH_PLUGIN_KW));
 
 			auto resp = req;
 
