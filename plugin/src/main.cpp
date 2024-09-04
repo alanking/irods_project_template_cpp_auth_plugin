@@ -162,10 +162,12 @@ namespace irods
 			// This can do any kinds of checks you want. For this template, we are doing the bare minimum while
 			// demonstrating the capability to enable multiple steps.
 
-			// The most important part of the server side of the plugin is to intialize the authInfo of the
+			// The most important part of the server side of the plugin is to initialize the authInfo of the
 			// RsComm::clientUser and RsComm::proxyUser. This is a kind of authorization which sets the privilege level
 			// of the authenticated user in the RsComm. Once this is set, it determines which APIs the client is allowed
 			// to invoke as this authenticated user. This is how the server knows that the user has been authenticated.
+			// More information about the user authorization levels can be found in the main iRODS project in this
+			// header file: lib/core/include/irods/rodsUser.h
 
 			// For this template project, we will make 3 assumptions:
 			//   1. The client user and proxy user are the same (i.e. not acting on behalf of another user).
